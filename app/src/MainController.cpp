@@ -5,6 +5,12 @@
 namespace app {
     void MainController::initialize() {
         engine::graphics::OpenGL::enable_depth_testing();
+
+        auto camera =
+                engine::core::Controller::get<engine::graphics::GraphicsController>()
+                ->camera();
+
+        camera->Position = glm::vec3(0.0f, 2.0f, 8.0f);
     }
 
     bool MainController::loop() {
@@ -77,5 +83,32 @@ namespace app {
 
         camera->rotate_camera(mouse.dx, mouse.dy);
         camera->zoom(mouse.scroll);
+    }
+
+    void MainController::draw() {
+        draw_room();
+    }
+
+    void MainController::draw_room() {
+        auto graphics =
+                engine::core::Controller::get<engine::graphics::GraphicsController>();
+
+        auto resources =
+                engine::core::Controller::get<engine::resources::ResourcesController>();
+
+        auto shader = resources->shader("room");
+        auto room   = resources->model("room");
+
+        shader->use();
+
+        shader->set_mat4("projection", graphics->projection_matrix());
+        shader->set_mat4("view", graphics->camera()->view_matrix());
+        shader->set_mat4("model", glm::mat4(1.0f));
+
+        shader->set_vec3("light_direction", glm::vec3(-0.5f, -1.0f, -0.3f));
+        shader->set_vec3("light_color", glm::vec3(1.0f));
+        shader->set_vec3("object_color", glm::vec3(0.8f, 0.7f, 0.6f));
+
+        room->draw(shader);
     }
 } // namespace app
