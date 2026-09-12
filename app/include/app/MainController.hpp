@@ -30,6 +30,8 @@ namespace app {
         void update_camera();
 
         bool m_cursor_enabled{true};
+        glm::vec3 m_point_light_position{0.0f, 3.0f, 2.0f};
+        glm::vec3 m_point_light_color{1.0f, 1.0f, 1.0f};
     };
 } // namespace app
 

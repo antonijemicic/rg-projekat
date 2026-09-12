@@ -105,8 +105,8 @@ namespace app {
         shader->set_mat4("view", graphics->camera()->view_matrix());
         shader->set_mat4("model", glm::mat4(1.0f));
 
-        shader->set_vec3("light_direction", glm::vec3(-0.5f, -1.0f, -0.3f));
-        shader->set_vec3("light_color", glm::vec3(1.0f));
+        shader->set_vec3("point_light_position", m_point_light_position);
+        shader->set_vec3("point_light_color", m_point_light_color);
         shader->set_vec3("object_color", glm::vec3(0.8f, 0.7f, 0.6f));
 
         room->draw(shader);
