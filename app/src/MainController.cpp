@@ -27,10 +27,18 @@ namespace app {
     }
 
     void MainController::poll_events() {
+        const auto platform =
+                engine::core::Controller::get<engine::platform::PlatformController>();
+
+        if (platform->key(engine::platform::KEY_E).state()
+            == engine::platform::Key::State::JustPressed) {
+            start_event_sequence();
+        }
     }
 
     void MainController::update() {
         update_camera();
+        update_event_sequence();
     }
 
     void MainController::begin_draw() {
@@ -167,5 +175,39 @@ namespace app {
 
         camera->rotate_camera(mouse.dx, mouse.dy);
         camera->zoom(mouse.scroll);
+    }
+
+    void MainController::start_event_sequence() {
+        m_event_timer           = 0.0f;
+        m_event_sequence_active = true;
+        m_event_a_triggered     = false;
+
+        m_point_light_position = glm::vec3(0.0f, 3.0f, 2.0f);
+        m_point_light_color    = glm::vec3(1.0f);
+        m_spot_light_color     = glm::vec3(1.0f);
+    }
+
+    void MainController::update_event_sequence() {
+        if (!m_event_sequence_active) {
+            return;
+        }
+
+        const auto platform =
+                engine::core::Controller::get<engine::platform::PlatformController>();
+
+        m_event_timer += platform->dt();
+
+        if (m_event_timer >= 2.0f && !m_event_a_triggered) {
+            m_point_light_color = glm::vec3(1.0f, 0.0f, 0.0f);
+
+            m_event_a_triggered = true;
+        }
+
+        if (m_event_timer >= 5.0f) {
+            m_point_light_position = glm::vec3(-3.0f, 1.0f, 0.0f);
+            m_spot_light_color     = glm::vec3(0.0f, 0.2f, 1.0f);
+
+            m_event_sequence_active = false;
+        }
     }
 } // namespace app
