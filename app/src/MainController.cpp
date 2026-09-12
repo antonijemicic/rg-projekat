@@ -1,3 +1,4 @@
+#include <app/GUIController.hpp>
 #include <app/MainController.hpp>
 
 #include <engine/graphics/GraphicsController.hpp>
@@ -99,6 +100,12 @@ namespace app {
     }
 
     void MainController::update_camera() {
+        auto gui = engine::core::Controller::get<GUIController>();
+
+        if (gui->is_enabled()) {
+            return;
+        }
+
         auto platform =
                 engine::core::Controller::get<engine::platform::PlatformController>();
 
@@ -108,7 +115,6 @@ namespace app {
 
         const float dt = platform->dt();
 
-        // Kretanje - WASD
         if (platform->key(engine::platform::KEY_W).state()
             == engine::platform::Key::State::Pressed) {
             camera->move_camera(
@@ -137,7 +143,6 @@ namespace app {
                 dt);
         }
 
-        // Okretanje - strelice
         if (platform->key(engine::platform::KEY_LEFT).state()
             == engine::platform::Key::State::Pressed) {
             camera->rotate_camera(-1.5f, 0.0f);
@@ -158,7 +163,6 @@ namespace app {
             camera->rotate_camera(0.0f, -1.5f);
         }
 
-        // Miš i scroll ostaju dostupni
         const auto mouse = platform->mouse();
 
         camera->rotate_camera(mouse.dx, mouse.dy);

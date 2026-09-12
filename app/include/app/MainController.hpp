@@ -10,6 +10,18 @@ namespace app {
             return "app::MainController";
         }
 
+        glm::vec3 &point_light_position() {
+            return m_point_light_position;
+        }
+
+        glm::vec3 &point_light_color() {
+            return m_point_light_color;
+        }
+
+        glm::vec3 &spot_light_color() {
+            return m_spot_light_color;
+        }
+
     private:
         void initialize() override;
 
@@ -31,7 +43,6 @@ namespace app {
 
         glm::vec3 m_point_light_position{0.0f, 3.0f, 2.0f};
         glm::vec3 m_point_light_color{1.0f, 1.0f, 1.0f};
-
         glm::vec3 m_spot_light_color{1.0f, 1.0f, 1.0f};
     };
 } // namespace app
