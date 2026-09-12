@@ -26,14 +26,6 @@ namespace app {
     }
 
     void MainController::poll_events() {
-        const auto platform =
-                engine::core::Controller::get<engine::platform::PlatformController>();
-
-        if (platform->key(engine::platform::KEY_F1).state()
-            == engine::platform::Key::State::JustPressed) {
-            m_cursor_enabled = !m_cursor_enabled;
-            platform->set_enable_cursor(m_cursor_enabled);
-        }
     }
 
     void MainController::update() {
@@ -44,49 +36,13 @@ namespace app {
         engine::graphics::OpenGL::clear_buffers();
     }
 
+    void MainController::draw() {
+        draw_room();
+    }
+
     void MainController::end_draw() {
         engine::core::Controller::get<engine::platform::PlatformController>()
                 ->swap_buffers();
-    }
-
-    void MainController::update_camera() {
-        auto platform =
-                engine::core::Controller::get<engine::platform::PlatformController>();
-
-        auto camera =
-                engine::core::Controller::get<engine::graphics::GraphicsController>()
-                ->camera();
-
-        const float dt = platform->dt();
-
-        if (platform->key(engine::platform::KEY_W).state()
-            == engine::platform::Key::State::Pressed) {
-            camera->move_camera(engine::graphics::Camera::Movement::FORWARD, dt);
-        }
-
-        if (platform->key(engine::platform::KEY_S).state()
-            == engine::platform::Key::State::Pressed) {
-            camera->move_camera(engine::graphics::Camera::Movement::BACKWARD, dt);
-        }
-
-        if (platform->key(engine::platform::KEY_A).state()
-            == engine::platform::Key::State::Pressed) {
-            camera->move_camera(engine::graphics::Camera::Movement::LEFT, dt);
-        }
-
-        if (platform->key(engine::platform::KEY_D).state()
-            == engine::platform::Key::State::Pressed) {
-            camera->move_camera(engine::graphics::Camera::Movement::RIGHT, dt);
-        }
-
-        const auto mouse = platform->mouse();
-
-        camera->rotate_camera(mouse.dx, mouse.dy);
-        camera->zoom(mouse.scroll);
-    }
-
-    void MainController::draw() {
-        draw_room();
     }
 
     void MainController::draw_room() {
@@ -101,14 +57,111 @@ namespace app {
 
         shader->use();
 
-        shader->set_mat4("projection", graphics->projection_matrix());
-        shader->set_mat4("view", graphics->camera()->view_matrix());
-        shader->set_mat4("model", glm::mat4(1.0f));
+        shader->set_mat4(
+            "projection",
+            graphics->projection_matrix());
 
-        shader->set_vec3("point_light_position", m_point_light_position);
-        shader->set_vec3("point_light_color", m_point_light_color);
-        shader->set_vec3("object_color", glm::vec3(0.8f, 0.7f, 0.6f));
+        shader->set_mat4(
+            "view",
+            graphics->camera()->view_matrix());
+
+        shader->set_mat4(
+            "model",
+            glm::mat4(1.0f));
+
+        shader->set_vec3(
+            "point_light_position",
+            m_point_light_position);
+
+        shader->set_vec3(
+            "point_light_color",
+            m_point_light_color);
+
+        auto camera = graphics->camera();
+
+        shader->set_vec3(
+            "spot_light_position",
+            camera->Position);
+
+        shader->set_vec3(
+            "spot_light_direction",
+            camera->Front);
+
+        shader->set_vec3(
+            "spot_light_color",
+            m_spot_light_color);
+
+        shader->set_vec3(
+            "object_color",
+            glm::vec3(0.8f, 0.7f, 0.6f));
 
         room->draw(shader);
+    }
+
+    void MainController::update_camera() {
+        auto platform =
+                engine::core::Controller::get<engine::platform::PlatformController>();
+
+        auto camera =
+                engine::core::Controller::get<engine::graphics::GraphicsController>()
+                ->camera();
+
+        const float dt = platform->dt();
+
+        // Kretanje - WASD
+        if (platform->key(engine::platform::KEY_W).state()
+            == engine::platform::Key::State::Pressed) {
+            camera->move_camera(
+                engine::graphics::Camera::Movement::FORWARD,
+                dt);
+        }
+
+        if (platform->key(engine::platform::KEY_S).state()
+            == engine::platform::Key::State::Pressed) {
+            camera->move_camera(
+                engine::graphics::Camera::Movement::BACKWARD,
+                dt);
+        }
+
+        if (platform->key(engine::platform::KEY_A).state()
+            == engine::platform::Key::State::Pressed) {
+            camera->move_camera(
+                engine::graphics::Camera::Movement::LEFT,
+                dt);
+        }
+
+        if (platform->key(engine::platform::KEY_D).state()
+            == engine::platform::Key::State::Pressed) {
+            camera->move_camera(
+                engine::graphics::Camera::Movement::RIGHT,
+                dt);
+        }
+
+        // Okretanje - strelice
+        if (platform->key(engine::platform::KEY_LEFT).state()
+            == engine::platform::Key::State::Pressed) {
+            camera->rotate_camera(-1.5f, 0.0f);
+        }
+
+        if (platform->key(engine::platform::KEY_RIGHT).state()
+            == engine::platform::Key::State::Pressed) {
+            camera->rotate_camera(1.5f, 0.0f);
+        }
+
+        if (platform->key(engine::platform::KEY_UP).state()
+            == engine::platform::Key::State::Pressed) {
+            camera->rotate_camera(0.0f, 1.5f);
+        }
+
+        if (platform->key(engine::platform::KEY_DOWN).state()
+            == engine::platform::Key::State::Pressed) {
+            camera->rotate_camera(0.0f, -1.5f);
+        }
+
+        // Miš i scroll ostaju dostupni
+        const auto mouse = platform->mouse();
+
+        camera->rotate_camera(mouse.dx, mouse.dy);
+        camera->zoom(mouse.scroll);
     }
 } // namespace app
