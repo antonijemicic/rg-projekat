@@ -1,22 +1,17 @@
-/**
- * @file Engine.hpp
- * @brief Includes all the engine headers.
- */
-
 #ifndef MATF_RG_PROJECT_ENGINE_HPP
 #define MATF_RG_PROJECT_ENGINE_HPP
 
 #include <engine/core/App.hpp>
-
 #include <engine/core/Controller.hpp>
-
 
 #include <engine/platform/Input.hpp>
 #include <engine/platform/PlatformController.hpp>
 #include <engine/platform/Window.hpp>
 
 #include <engine/graphics/Camera.hpp>
+#include <engine/graphics/GraphicsController.hpp>
 #include <engine/graphics/OpenGL.hpp>
+#include <engine/graphics/PostProcessingController.hpp>
 
 #include <engine/util/ArgParser.hpp>
 #include <engine/util/Configuration.hpp>
@@ -30,4 +25,4 @@
 #include <engine/resources/Skybox.hpp>
 #include <engine/resources/Texture.hpp>
 
-#endif//MATF_RG_PROJECT_ENGINE_HPP
+#endif // MATF_RG_PROJECT_ENGINE_HPP
