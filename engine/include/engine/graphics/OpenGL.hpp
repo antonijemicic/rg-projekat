@@ -4,6 +4,10 @@
 #include <cstdint>
 #include <engine/resources/Shader.hpp>
 #include <filesystem>
+#include <source_location>
+#include <string>
+#include <type_traits>
+#include <utility>
 
 namespace engine::resources {
     class Skybox;
@@ -28,6 +32,11 @@ namespace engine::graphics {
         struct ScreenQuadData {
             uint32_t vao{0};
             uint32_t vbo{0};
+        };
+
+        struct PointShadowData {
+            uint32_t framebuffer{0};
+            uint32_t depth_cubemap{0};
         };
 
         template<typename TResult, typename... TOpenGLArgs, typename... Args>
@@ -83,6 +92,12 @@ namespace engine::graphics {
 
         static void clear_buffers();
 
+        static void clear_depth_buffer();
+
+        static void set_viewport(
+            int32_t width,
+            int32_t height);
+
         static std::string get_compilation_error_message(
             uint32_t shader_id);
 
@@ -104,6 +119,20 @@ namespace engine::graphics {
 
         static void destroy_screen_quad(
             const ScreenQuadData &screen_quad);
+
+        static PointShadowData create_point_shadow_map(
+            int32_t size);
+
+        static void bind_point_shadow_face(
+            const PointShadowData &shadow,
+            int32_t face);
+
+        static void bind_cubemap_texture(
+            uint32_t texture_unit,
+            uint32_t texture_id);
+
+        static void destroy_point_shadow_map(
+            const PointShadowData &shadow);
 
     private:
         static void assert_no_error(
