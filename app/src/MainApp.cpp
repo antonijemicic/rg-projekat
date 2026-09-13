@@ -2,12 +2,19 @@
 #include <app/MainApp.hpp>
 #include <app/MainController.hpp>
 
+#include <engine/graphics/PointShadowController.hpp>
 #include <engine/graphics/PostProcessingController.hpp>
 
 namespace app {
     void MainApp::app_setup() {
+        auto point_shadow_controller =
+                register_controller<
+                    engine::graphics::
+                    PointShadowController>();
+
         auto main_controller =
-                register_controller<MainController>();
+                register_controller<
+                    MainController>();
 
         auto post_processing_controller =
                 register_controller<
@@ -15,12 +22,16 @@ namespace app {
                     PostProcessingController>();
 
         auto gui_controller =
-                register_controller<GUIController>();
+                register_controller<
+                    GUIController>();
 
-        main_controller->after(
+        point_shadow_controller->after(
             engine::core::Controller::get<
                 engine::core::
                 EngineControllersEnd>());
+
+        main_controller->after(
+            point_shadow_controller);
 
         post_processing_controller->after(
             main_controller);
