@@ -156,7 +156,7 @@ namespace app {
             "point_shadow_map",
             5);
 
-        engine::graphics::OpenGL::bind_cubemap_texture(
+        graphics->bind_point_shadow_map(
             5,
             point_shadows->depth_cubemap());
 
