@@ -1,47 +1,59 @@
-# {NAME-OF-THE-PROJECT}
+# RG PROJECT - Isometric Room
 
-{INDEX} - {STUDENT-FULL-NAME}  
-{PROJECT DESCRIPTION}
+mi23276 - Antonije Mićić
+
+Interactive 3D isometric room with configurable lighting, timed lighting events,
+framebuffer post-processing effects and point shadows.
 
 ## Controls
 
-{BUTTON1} -> {ACTION1}  
-{BUTTON2} -> {ACTION2}  
-...  
-{BUTTONN} -> {ACTIONN}
+W -> Move camera forward  
+S -> Move camera backward  
+A -> Move camera left  
+D -> Move camera right  
+Arrow Keys -> Rotate camera  
+Mouse Movement -> Rotate camera  
+Mouse Scroll -> Zoom  
+F2 -> Toggle GUI  
+E -> Start timed lighting event  
+ESC -> Exit application
 
 ## Features
 
 ### Fundamental:
 
-[ ] Model with lighting
-[ ] Two types of lighting with customizable colors and movement through GUI or ACTIONS
-[ ] {ACTION_X} --- AFTER_M_SECONDS---Triggers---> {EVENT_A} ---> AFTER_N_SECONDS---Triggers---> {EVENT_B}
+[x] Model with lighting
+[x] Two types of lighting with customizable colors and movement through GUI or ACTIONS
+[x] E --- AFTER 2 SECONDS ---Triggers---> Point Light becomes red ---> AFTER 3 SECONDS ---Triggers---> Point Light moves
+and Spot Light becomes blue
 
 ### Group A:
 
-[ ] Frame-buffers with post-processing   
+[x] Frame-buffers with post-processing   
 [ ] Off-screen Anti-Aliasing  
 [ ] Parallax Mapping
 [ ] Bloom with the use of HDR
 
 ### Group B:
+
 [ ] Deferred Shading  
-[ ] Point Shadows  
+[x] Point Shadows  
 [ ] SSAO
 
 ### Engine improvement:
 
-[ ] ...
+[x] Reusable framebuffer post-processing controller
+[x] Reusable point shadow controller
 
 ## Models:
 
-[link1]   
-[link2]
+[Isometric Room - Poly Pizza](https://poly.pizza/m/epElsuhDoKg)
 
 ## Textures
 
-[link1]  
-[link2]
+No external textures are used.
 
-{OTHER-RESOURCES}
+## Other resources
+
+[LearnOpenGL - Framebuffers](https://learnopengl.com/Advanced-OpenGL/Framebuffers)  
+[LearnOpenGL - Point Shadows](https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows)
