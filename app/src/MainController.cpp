@@ -13,10 +13,10 @@ namespace app {
         auto graphics =
                 engine::core::Controller::get<engine::graphics::GraphicsController>();
 
-        m_model  = resources->model("retro_tv");
+        m_model  = resources->model("backpack");
         m_shader = resources->shader("basic");
 
-        graphics->camera()->Position = glm::vec3(0.0f, 0.0f, 3.0f);
+        graphics->camera()->Position = glm::vec3(0.0f, 0.0f, 7.0f);
     }
 
     void MainController::poll_events() {
@@ -91,7 +91,7 @@ namespace app {
             m_event_a_done          = false;
             m_event_b_done          = false;
 
-            m_event_start_time = std::chrono::steady_clock::now();
+            m_event_start_time = platform->frame_time().current;
 
             m_point_position    = glm::vec3(1.5f, 1.0f, 2.0f);
             m_point_color       = glm::vec3(1.0f, 0.7f, 0.4f);
@@ -104,12 +104,11 @@ namespace app {
             return;
         }
 
-        auto current_time = std::chrono::steady_clock::now();
+        auto platform =
+                engine::core::Controller::get<engine::platform::PlatformController>();
 
         float elapsed_seconds =
-                std::chrono::duration<float>(
-                    current_time - m_event_start_time
-                ).count();
+                platform->frame_time().current - m_event_start_time;
 
         if (!m_event_a_done && elapsed_seconds >= 2.0f) {
             m_point_color = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -145,8 +144,8 @@ namespace app {
         m_shader->set_mat4("projection", graphics->projection_matrix());
 
         m_shader->set_vec3(
-            "object_color",
-            glm::vec3(0.6f, 0.35f, 0.15f)
+            "view_position",
+            graphics->camera()->Position
         );
 
         m_shader->set_vec3(

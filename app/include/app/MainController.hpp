@@ -1,7 +1,5 @@
 #pragma once
 
-#include <chrono>
-
 #include <engine/core/Engine.hpp>
 
 namespace app {
@@ -32,6 +30,6 @@ namespace app {
         bool m_event_a_done{false};
         bool m_event_b_done{false};
 
-        std::chrono::steady_clock::time_point m_event_start_time{};
+        float m_event_start_time{0.0f};
     };
 } // namespace app

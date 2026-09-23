@@ -1,8 +1,9 @@
-# Retro TV
+# Backpack
 
 mi23276 - ANTONIJE MICIC  
-Retro TV model with directional and point lighting. Light colors and point light position can be controlled using
-keyboard actions. The project also contains a timed event sequence triggered by the E key.
+Textured backpack model with directional and point lighting. The model uses diffuse and specular textures. Both light
+colors and the point light position can be controlled using keyboard actions. The project also contains a timed event
+sequence triggered by the E key.
 
 ## Controls
 
@@ -24,7 +25,7 @@ E -> Start timed event sequence
 
 ### Fundamental:
 
-[x] Model with lighting  
+[x] Model with lighting and textures  
 [x] Two types of lighting with customizable colors and movement through ACTIONS  
 [x] Press E --- AFTER 2 SECONDS ---Triggers---> Point light becomes red ---> AFTER 3 SECONDS ---Triggers---> Point light
 changes position and directional light becomes blue
@@ -48,8 +49,8 @@ changes position and directional light becomes blue
 
 ## Models:
 
-https://poly.pizza/m/2tfjTOK1Lh4
+https://learnopengl.com/Model-Loading/Model
 
 ## Textures
 
-None
+Diffuse and specular textures are used by the shader. The backpack model also includes a normal texture.
