@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include <engine/core/Engine.hpp>
 
 namespace app {
@@ -8,6 +10,8 @@ namespace app {
         void initialize() override;
 
         void poll_events() override;
+
+        void update() override;
 
         void begin_draw() override;
 
@@ -23,5 +27,11 @@ namespace app {
 
         glm::vec3 m_point_color{1.0f, 0.7f, 0.4f};
         glm::vec3 m_directional_color{1.0f, 1.0f, 1.0f};
+
+        bool m_event_sequence_active{false};
+        bool m_event_a_done{false};
+        bool m_event_b_done{false};
+
+        std::chrono::steady_clock::time_point m_event_start_time{};
     };
 } // namespace app

@@ -55,7 +55,6 @@ namespace app {
             m_point_position.z += LIGHT_STEP;
         }
 
-        // Point light colors
         if (platform->key(engine::platform::KEY_1).state() ==
             engine::platform::Key::State::JustPressed) {
             m_point_color = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -71,7 +70,6 @@ namespace app {
             m_point_color = glm::vec3(0.0f, 0.0f, 1.0f);
         }
 
-        // Directional light colors
         if (platform->key(engine::platform::KEY_4).state() ==
             engine::platform::Key::State::JustPressed) {
             m_directional_color = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -85,6 +83,48 @@ namespace app {
         if (platform->key(engine::platform::KEY_6).state() ==
             engine::platform::Key::State::JustPressed) {
             m_directional_color = glm::vec3(0.0f, 0.0f, 1.0f);
+        }
+
+        if (platform->key(engine::platform::KEY_E).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_event_sequence_active = true;
+            m_event_a_done          = false;
+            m_event_b_done          = false;
+
+            m_event_start_time = std::chrono::steady_clock::now();
+
+            m_point_position    = glm::vec3(1.5f, 1.0f, 2.0f);
+            m_point_color       = glm::vec3(1.0f, 0.7f, 0.4f);
+            m_directional_color = glm::vec3(1.0f, 1.0f, 1.0f);
+        }
+    }
+
+    void MainController::update() {
+        if (!m_event_sequence_active) {
+            return;
+        }
+
+        auto current_time = std::chrono::steady_clock::now();
+
+        float elapsed_seconds =
+                std::chrono::duration<float>(
+                    current_time - m_event_start_time
+                ).count();
+
+        if (!m_event_a_done && elapsed_seconds >= 2.0f) {
+            m_point_color = glm::vec3(1.0f, 0.0f, 0.0f);
+
+            m_event_a_done = true;
+        }
+
+        if (m_event_a_done &&
+            !m_event_b_done &&
+            elapsed_seconds >= 5.0f) {
+            m_point_position    = glm::vec3(-1.5f, 1.0f, 2.0f);
+            m_directional_color = glm::vec3(0.0f, 0.0f, 1.0f);
+
+            m_event_b_done          = true;
+            m_event_sequence_active = false;
         }
     }
 
