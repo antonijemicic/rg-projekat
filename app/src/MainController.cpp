@@ -1,6 +1,7 @@
 #include <app/MainController.hpp>
 
 #include <engine/graphics/GraphicsController.hpp>
+#include <engine/platform/PlatformController.hpp>
 
 namespace app {
     void MainController::initialize() {
@@ -18,6 +19,10 @@ namespace app {
         graphics->camera()->Position = glm::vec3(0.0f, 0.0f, 3.0f);
     }
 
+    void MainController::begin_draw() {
+        engine::graphics::OpenGL::clear_buffers();
+    }
+
     void MainController::draw() {
         auto graphics =
                 engine::core::Controller::get<engine::graphics::GraphicsController>();
@@ -31,5 +36,12 @@ namespace app {
         m_shader->set_mat4("projection", graphics->projection_matrix());
 
         m_model->draw(m_shader);
+    }
+
+    void MainController::end_draw() {
+        auto platform =
+                engine::core::Controller::get<engine::platform::PlatformController>();
+
+        platform->swap_buffers();
     }
 } // namespace app
