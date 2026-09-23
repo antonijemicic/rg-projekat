@@ -23,36 +23,36 @@ namespace app {
         auto platform =
                 engine::core::Controller::get<engine::platform::PlatformController>();
 
-        constexpr float LIGHT_STEP = 0.2f;
+        constexpr float light_step = 0.2f;
 
         if (platform->key(engine::platform::KEY_J).state() ==
             engine::platform::Key::State::JustPressed) {
-            m_point_position.x -= LIGHT_STEP;
+            m_point_position.x -= light_step;
         }
 
         if (platform->key(engine::platform::KEY_L).state() ==
             engine::platform::Key::State::JustPressed) {
-            m_point_position.x += LIGHT_STEP;
+            m_point_position.x += light_step;
         }
 
         if (platform->key(engine::platform::KEY_I).state() ==
             engine::platform::Key::State::JustPressed) {
-            m_point_position.y += LIGHT_STEP;
+            m_point_position.y += light_step;
         }
 
         if (platform->key(engine::platform::KEY_K).state() ==
             engine::platform::Key::State::JustPressed) {
-            m_point_position.y -= LIGHT_STEP;
+            m_point_position.y -= light_step;
         }
 
         if (platform->key(engine::platform::KEY_U).state() ==
             engine::platform::Key::State::JustPressed) {
-            m_point_position.z -= LIGHT_STEP;
+            m_point_position.z -= light_step;
         }
 
         if (platform->key(engine::platform::KEY_O).state() ==
             engine::platform::Key::State::JustPressed) {
-            m_point_position.z += LIGHT_STEP;
+            m_point_position.z += light_step;
         }
 
         if (platform->key(engine::platform::KEY_1).state() ==
