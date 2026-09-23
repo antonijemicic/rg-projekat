@@ -19,6 +19,75 @@ namespace app {
         graphics->camera()->Position = glm::vec3(0.0f, 0.0f, 3.0f);
     }
 
+    void MainController::poll_events() {
+        auto platform =
+                engine::core::Controller::get<engine::platform::PlatformController>();
+
+        constexpr float LIGHT_STEP = 0.2f;
+
+        if (platform->key(engine::platform::KEY_J).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_position.x -= LIGHT_STEP;
+        }
+
+        if (platform->key(engine::platform::KEY_L).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_position.x += LIGHT_STEP;
+        }
+
+        if (platform->key(engine::platform::KEY_I).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_position.y += LIGHT_STEP;
+        }
+
+        if (platform->key(engine::platform::KEY_K).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_position.y -= LIGHT_STEP;
+        }
+
+        if (platform->key(engine::platform::KEY_U).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_position.z -= LIGHT_STEP;
+        }
+
+        if (platform->key(engine::platform::KEY_O).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_position.z += LIGHT_STEP;
+        }
+
+        // Point light colors
+        if (platform->key(engine::platform::KEY_1).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_color = glm::vec3(1.0f, 0.0f, 0.0f);
+        }
+
+        if (platform->key(engine::platform::KEY_2).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_color = glm::vec3(0.0f, 1.0f, 0.0f);
+        }
+
+        if (platform->key(engine::platform::KEY_3).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_point_color = glm::vec3(0.0f, 0.0f, 1.0f);
+        }
+
+        // Directional light colors
+        if (platform->key(engine::platform::KEY_4).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_directional_color = glm::vec3(1.0f, 0.0f, 0.0f);
+        }
+
+        if (platform->key(engine::platform::KEY_5).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_directional_color = glm::vec3(0.0f, 1.0f, 0.0f);
+        }
+
+        if (platform->key(engine::platform::KEY_6).state() ==
+            engine::platform::Key::State::JustPressed) {
+            m_directional_color = glm::vec3(0.0f, 0.0f, 1.0f);
+        }
+    }
+
     void MainController::begin_draw() {
         engine::graphics::OpenGL::clear_buffers();
     }
@@ -34,6 +103,31 @@ namespace app {
         m_shader->set_mat4("model", model);
         m_shader->set_mat4("view", graphics->camera()->view_matrix());
         m_shader->set_mat4("projection", graphics->projection_matrix());
+
+        m_shader->set_vec3(
+            "object_color",
+            glm::vec3(0.6f, 0.35f, 0.15f)
+        );
+
+        m_shader->set_vec3(
+            "directional_direction",
+            glm::vec3(-0.2f, -1.0f, -0.3f)
+        );
+
+        m_shader->set_vec3(
+            "directional_color",
+            m_directional_color
+        );
+
+        m_shader->set_vec3(
+            "point_position",
+            m_point_position
+        );
+
+        m_shader->set_vec3(
+            "point_color",
+            m_point_color
+        );
 
         m_model->draw(m_shader);
     }
