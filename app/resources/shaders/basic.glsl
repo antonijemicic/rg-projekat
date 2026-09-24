@@ -14,17 +14,43 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
-    vec4 world_position = model * vec4(a_position, 1.0);
+    vec4 world_position =
+    model * vec4(a_position, 1.0);
+
     frag_position = world_position.xyz;
 
-    frag_normal = mat3(transpose(inverse(model))) * a_normal;
+    frag_normal =
+    mat3(transpose(inverse(model))) * a_normal;
+
     frag_tex_coords = a_tex_coords;
 
-    gl_Position = projection * view * world_position;
+    gl_Position =
+    projection * view * world_position;
 }
 
 //#shader fragment
 #version 330 core
+
+struct DirectionalLight {
+    vec3 direction;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+struct PointLight {
+    vec3 position;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+struct Material {
+    vec3 specular;
+    float shininess;
+};
 
 in vec3 frag_position;
 in vec3 frag_normal;
@@ -34,54 +60,155 @@ out vec4 frag_color;
 
 uniform vec3 view_position;
 
-uniform vec3 directional_direction;
-uniform vec3 directional_color;
-
-uniform vec3 point_position;
-uniform vec3 point_color;
+uniform DirectionalLight directional_light;
+uniform PointLight point_light;
+uniform Material material;
 
 uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_specular1;
+
+vec3 calculate_directional_light(
+    vec3 normal,
+    vec3 view_direction,
+    vec3 texture_color
+) {
+    vec3 light_direction =
+    normalize(-directional_light.direction);
+
+    float diffuse_factor =
+    max(dot(normal, light_direction), 0.0);
+
+    vec3 reflection_direction =
+    reflect(-light_direction, normal);
+
+    float specular_factor =
+    pow(
+        max(
+            dot(
+                view_direction,
+                reflection_direction
+            ),
+            0.0
+        ),
+        material.shininess
+    );
+
+    vec3 ambient =
+    directional_light.ambient *
+    texture_color;
+
+    vec3 diffuse =
+    directional_light.diffuse *
+    diffuse_factor *
+    texture_color;
+
+    vec3 specular =
+    directional_light.specular *
+    specular_factor *
+    material.specular;
+
+    return ambient + diffuse + specular;
+}
+
+vec3 calculate_point_light(
+    vec3 normal,
+    vec3 view_direction,
+    vec3 texture_color
+) {
+    vec3 light_direction =
+    normalize(
+        point_light.position -
+        frag_position
+    );
+
+    float diffuse_factor =
+    max(dot(normal, light_direction), 0.0);
+
+    vec3 reflection_direction =
+    reflect(-light_direction, normal);
+
+    float specular_factor =
+    pow(
+        max(
+            dot(
+                view_direction,
+                reflection_direction
+            ),
+            0.0
+        ),
+        material.shininess
+    );
+
+    float distance_to_light =
+    length(
+        point_light.position -
+        frag_position
+    );
+
+    float attenuation =
+    1.0 /
+    (
+    1.0 +
+    0.09 * distance_to_light +
+    0.032 *
+    distance_to_light *
+    distance_to_light
+    );
+
+    vec3 ambient =
+    point_light.ambient *
+    texture_color;
+
+    vec3 diffuse =
+    point_light.diffuse *
+    diffuse_factor *
+    texture_color;
+
+    vec3 specular =
+    point_light.specular *
+    specular_factor *
+    material.specular;
+
+    ambient *= attenuation;
+    diffuse *= attenuation;
+    specular *= attenuation;
+
+    return ambient + diffuse + specular;
+}
 
 void main() {
-    vec3 norm = normalize(frag_normal);
-    vec3 view_dir = normalize(view_position - frag_position);
+    vec3 normal =
+    normalize(frag_normal);
 
-    vec3 albedo = texture(texture_diffuse1, frag_tex_coords).rgb;
-    vec3 specular_map = texture(texture_specular1, frag_tex_coords).rgb;
+    vec3 view_direction =
+    normalize(
+        view_position -
+        frag_position
+    );
 
-    // ===== Directional light =====
-    vec3 dir_light_dir = normalize(-directional_direction);
+    vec3 texture_color =
+    texture(
+        texture_diffuse1,
+        frag_tex_coords
+    ).rgb;
 
-    float dir_diff = max(dot(norm, dir_light_dir), 0.0);
-    vec3 dir_reflect_dir = reflect(-dir_light_dir, norm);
-    float dir_spec = pow(max(dot(view_dir, dir_reflect_dir), 0.0), 32.0);
+    vec3 directional_result =
+    calculate_directional_light(
+        normal,
+        view_direction,
+        texture_color
+    );
 
-    vec3 dir_ambient = 0.2 * directional_color * albedo;
-    vec3 dir_diffuse = dir_diff * directional_color * albedo;
-    vec3 dir_specular = dir_spec * directional_color * specular_map;
-
-    // ===== Point light =====
-    vec3 point_light_dir = normalize(point_position - frag_position);
-
-    float point_diff = max(dot(norm, point_light_dir), 0.0);
-    vec3 point_reflect_dir = reflect(-point_light_dir, norm);
-    float point_spec = pow(max(dot(view_dir, point_reflect_dir), 0.0), 32.0);
-
-    float distance_to_light = length(point_position - frag_position);
-    float attenuation = 1.0 / (1.0 + 0.09 * distance_to_light + 0.032 * distance_to_light * distance_to_light);
-
-    vec3 point_ambient = 0.1 * point_color * albedo;
-    vec3 point_diffuse = point_diff * point_color * albedo;
-    vec3 point_specular = point_spec * point_color * specular_map;
-
-    point_ambient *= attenuation;
-    point_diffuse *= attenuation;
-    point_specular *= attenuation;
+    vec3 point_result =
+    calculate_point_light(
+        normal,
+        view_direction,
+        texture_color
+    );
 
     vec3 result =
-    dir_ambient + dir_diffuse + dir_specular +
-    point_ambient + point_diffuse + point_specular;
+    directional_result +
+    point_result;
 
-    frag_color = vec4(result, 1.0);
+    frag_color =
+    vec4(result, 1.0);
 }
