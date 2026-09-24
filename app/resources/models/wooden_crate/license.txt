@@ -1,0 +1,11 @@
+Model Information:
+* title:	Game-Ready Wooden Crate (Low Poly, PBR)
+* source:	https://sketchfab.com/3d-models/game-ready-wooden-crate-low-poly-pbr-921cdec29cc94af48a41045b36cf6270
+* author:	zaaranakhwa (https://sketchfab.com/zaaranakhwa)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Game-Ready Wooden Crate (Low Poly, PBR)" (https://sketchfab.com/3d-models/game-ready-wooden-crate-low-poly-pbr-921cdec29cc94af48a41045b36cf6270) by zaaranakhwa (https://sketchfab.com/zaaranakhwa) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
