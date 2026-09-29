@@ -42,85 +42,68 @@ namespace app {
         }
 
         if (platform->key(engine::platform::KeyId::KEY_1).state()==engine::platform::Key::State::JustPressed) {
-            m_point_light.ambient=glm::vec3(0.2f, 0.0f, 0.0f);
-            m_point_light.diffuse=glm::vec3(1.0f, 0.0f, 0.0f);
-            m_point_light.specular=glm::vec3(1.0f, 0.0f, 0.0f);
+            m_point_light.set(ColorPreset::Red);
         }
 
         if (platform->key(engine::platform::KeyId::KEY_2).state()==engine::platform::Key::State::JustPressed) {
-            m_point_light.ambient=glm::vec3(0.0f, 0.2f, 0.0f);
-            m_point_light.diffuse=glm::vec3(0.0f, 1.0f, 0.0f);
-            m_point_light.specular=glm::vec3(0.0f, 1.0f, 0.0f);
+            m_point_light.set(ColorPreset::Green);
         }
 
         if (platform->key(engine::platform::KeyId::KEY_3).state()==engine::platform::Key::State::JustPressed) {
-            m_point_light.ambient=glm::vec3(0.0f, 0.0f, 0.2f);
-            m_point_light.diffuse=glm::vec3(0.0f, 0.0f, 1.0f);
-            m_point_light.specular=glm::vec3(0.0f, 0.0f, 1.0f);
+            m_point_light.set(ColorPreset::Blue);
         }
 
         if (platform->key(engine::platform::KeyId::KEY_4).state()==engine::platform::Key::State::JustPressed) {
-            m_directional_light.ambient=glm::vec3(0.2f, 0.0f, 0.0f);
-            m_directional_light.diffuse=glm::vec3(1.0f, 0.0f, 0.0f);
-            m_directional_light.specular=glm::vec3(1.0f, 0.0f, 0.0f);
+            m_directional_light.set(ColorPreset::Red);
         }
 
         if (platform->key(engine::platform::KeyId::KEY_5).state()==engine::platform::Key::State::JustPressed) {
-            m_directional_light.ambient=glm::vec3(0.0f, 0.2f, 0.0f);
-            m_directional_light.diffuse=glm::vec3(0.0f, 1.0f, 0.0f);
-            m_directional_light.specular=glm::vec3(0.0f, 1.0f, 0.0f);
+            m_directional_light.set(ColorPreset::Green);
         }
 
         if (platform->key(engine::platform::KeyId::KEY_6).state()==engine::platform::Key::State::JustPressed) {
-            m_directional_light.ambient=glm::vec3(0.0f, 0.0f, 0.2f);
-            m_directional_light.diffuse=glm::vec3(0.0f, 0.0f, 1.0f);
-            m_directional_light.specular=glm::vec3(0.0f, 0.0f, 1.0f);
+            m_directional_light.set(ColorPreset::Blue);
         }
 
         if (platform->key(engine::platform::KeyId::KEY_E).state()==engine::platform::Key::State::JustPressed) {
-            m_point_light.position=glm::vec3(1.5f, 1.0f, 2.0f);
-            m_point_light.ambient=glm::vec3(0.1f, 0.07f, 0.04f);
-            m_point_light.diffuse=glm::vec3(1.0f, 0.7f, 0.4f);
-            m_point_light.specular=glm::vec3(1.0f, 0.7f, 0.4f);
+            m_point_light.reset();
+            m_directional_light.reset();
 
-            m_directional_light.ambient=glm::vec3(0.4f, 0.4f, 0.4f);
-            m_directional_light.diffuse=glm::vec3(0.8f, 0.8f, 0.8f);
-            m_directional_light.specular=glm::vec3(1.0f, 1.0f, 1.0f);
-
-            m_timed_light_sequence_active=true;
-            m_point_light_red_event_done=false;
-            m_point_light_moved_and_directional_blue_event_done=false;
-            m_light_sequence_start_time=platform->frame_time().current;
+            m_event_state=EventState::WaitingForPointRed;
+            m_event_state_start_time=platform->frame_time().current;
         }
     }
 
     void MainController::update() {
-        if (!m_timed_light_sequence_active) {
-            return;
-        }
 
         auto platform=engine::core::Controller::get<engine::platform::PlatformController>();
-        float elapsed=platform->frame_time().current-m_light_sequence_start_time;
 
-        if (elapsed>=2.0f && !m_point_light_red_event_done) {
-            m_point_light.ambient=glm::vec3(0.2f, 0.0f, 0.0f);
-            m_point_light.diffuse=glm::vec3(1.0f, 0.0f, 0.0f);
-            m_point_light.specular=glm::vec3(1.0f, 0.0f, 0.0f);
+        float current_time=platform->frame_time().current;
+        float elapsed=current_time-m_event_state_start_time;
 
-            m_point_light_red_event_done=true;
+        switch (m_event_state) {
+            case EventState::Idle:
+                break;
+
+            case EventState::WaitingForPointRed:
+              if (elapsed>=2.0f) {
+                  m_point_light.set(ColorPreset::Red);
+
+                  m_event_state=EventState::WaitingForPointMoveAndDirectionalBlue;
+                  m_event_state_start_time=current_time;
+            }
+                break;
+
+            case EventState::WaitingForPointMoveAndDirectionalBlue:
+            if (elapsed>=3.0f) {
+                  m_point_light.position=glm::vec3(-1.5f, 1.0f, 2.0f);
+
+                  m_directional_light.set(ColorPreset::Blue);
+
+                m_event_state=EventState::Idle;
+            }
+                break;
         }
-
-        if (elapsed>=5.0f && !m_point_light_moved_and_directional_blue_event_done) {
-            m_point_light.position=glm::vec3(-1.5f, 1.0f, 2.0f);
-
-            m_directional_light.ambient=glm::vec3(0.0f, 0.0f, 0.2f);
-            m_directional_light.diffuse=glm::vec3(0.0f, 0.0f, 1.0f);
-            m_directional_light.specular=glm::vec3(0.0f, 0.0f, 1.0f);
-
-            m_point_light_moved_and_directional_blue_event_done=true;
-            m_timed_light_sequence_active=false;
-        }
-
     }
 
     void MainController::begin_draw() {

@@ -13,11 +13,46 @@ namespace app {
         void end_draw() override;
 
     private:
+        enum class ColorPreset {
+            Red,
+            Green,
+            Blue
+        };
+
         struct DirectionalLight {
             glm::vec3 direction{-0.2f, -1.0f, -0.3f};
             glm::vec3 ambient{0.4f, 0.4f, 0.4f};
             glm::vec3 diffuse{0.8f, 0.8f, 0.8f};
             glm::vec3 specular{1.0f, 1.0f, 1.0f};
+
+            void set(ColorPreset color) {
+                glm::vec3 value{};
+
+                switch (color) {
+                    case ColorPreset::Red:
+                        value=glm::vec3{1.0f, 0.0f, 0.0f};
+                        break;
+
+                    case ColorPreset::Green:
+                        value=glm::vec3{0.0f, 1.0f, 0.0f};
+                        break;
+
+                    case ColorPreset::Blue:
+                        value=glm::vec3{0.0f, 0.0f, 1.0f};
+                        break;
+                }
+
+                ambient=0.2f*value;
+                diffuse=value;
+                specular=value;
+            }
+
+            void reset() {
+                direction=glm::vec3{-0.2f, -1.0f, -0.3f};
+                ambient=glm::vec3{0.4f, 0.4f, 0.4f};
+                diffuse=glm::vec3{0.8f, 0.8f, 0.8f};
+                specular=glm::vec3{1.0f, 1.0f, 1.0f};
+            }
         };
 
         struct PointLight {
@@ -25,6 +60,35 @@ namespace app {
             glm::vec3 ambient{0.1f, 0.07f, 0.04f};
             glm::vec3 diffuse{1.0f, 0.7f, 0.4f};
             glm::vec3 specular{1.0f, 0.7f, 0.4f};
+
+            void set(ColorPreset color) {
+                glm::vec3 value{};
+
+                switch (color) {
+                    case ColorPreset::Red:
+                        value=glm::vec3{1.0f, 0.0f, 0.0f};
+                        break;
+
+                    case ColorPreset::Green:
+                        value=glm::vec3{0.0f, 1.0f, 0.0f};
+                        break;
+
+                    case ColorPreset::Blue:
+                        value=glm::vec3{0.0f, 0.0f, 1.0f};
+                        break;
+                }
+
+                ambient=0.2f*value;
+                diffuse=value;
+                specular=value;
+            }
+
+            void reset() {
+                position=glm::vec3{1.5f, 1.0f, 2.0f};
+                ambient=glm::vec3{0.1f, 0.07f, 0.04f};
+                diffuse=glm::vec3{1.0f, 0.7f, 0.4f};
+                specular=glm::vec3{1.0f, 0.7f, 0.4f};
+            }
         };
 
         engine::resources::Model *m_model{};
@@ -33,9 +97,14 @@ namespace app {
         DirectionalLight m_directional_light{};
         PointLight m_point_light{};
 
-        bool m_timed_light_sequence_active{false};
-        bool m_point_light_red_event_done{false};
-        bool m_point_light_moved_and_directional_blue_event_done{false};
-        float m_light_sequence_start_time{0.0f};
+        enum class EventState {
+            Idle,
+            WaitingForPointRed,
+            WaitingForPointMoveAndDirectionalBlue
+        };
+
+        EventState m_event_state{EventState::Idle};
+
+        float m_event_state_start_time{0.0f};
     };
 }

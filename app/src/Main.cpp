@@ -15,7 +15,5 @@ namespace app {
 }
 
 int main(int argc, char **argv) {
-    app::MainApp application;
-
-    return application.run(argc, argv);
+    return std::make_unique<app::MainApp>()->run(argc, argv);
 }
