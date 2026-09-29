@@ -7,6 +7,7 @@ namespace app {
     protected:
         void initialize() override;
         void poll_events() override;
+        void update() override;
         void begin_draw() override;
         void draw() override;
         void end_draw() override;
@@ -31,5 +32,10 @@ namespace app {
 
         DirectionalLight m_directional_light{};
         PointLight m_point_light{};
+
+        bool m_timed_light_sequence_active{false};
+        bool m_point_light_red_event_done{false};
+        bool m_point_light_moved_and_directional_blue_event_done{false};
+        float m_light_sequence_start_time{0.0f};
     };
 }

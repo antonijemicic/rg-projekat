@@ -76,6 +76,51 @@ namespace app {
             m_directional_light.diffuse=glm::vec3(0.0f, 0.0f, 1.0f);
             m_directional_light.specular=glm::vec3(0.0f, 0.0f, 1.0f);
         }
+
+        if (platform->key(engine::platform::KeyId::KEY_E).state()==engine::platform::Key::State::JustPressed) {
+            m_point_light.position=glm::vec3(1.5f, 1.0f, 2.0f);
+            m_point_light.ambient=glm::vec3(0.1f, 0.07f, 0.04f);
+            m_point_light.diffuse=glm::vec3(1.0f, 0.7f, 0.4f);
+            m_point_light.specular=glm::vec3(1.0f, 0.7f, 0.4f);
+
+            m_directional_light.ambient=glm::vec3(0.4f, 0.4f, 0.4f);
+            m_directional_light.diffuse=glm::vec3(0.8f, 0.8f, 0.8f);
+            m_directional_light.specular=glm::vec3(1.0f, 1.0f, 1.0f);
+
+            m_timed_light_sequence_active=true;
+            m_point_light_red_event_done=false;
+            m_point_light_moved_and_directional_blue_event_done=false;
+            m_light_sequence_start_time=platform->frame_time().current;
+        }
+    }
+
+    void MainController::update() {
+        if (!m_timed_light_sequence_active) {
+            return;
+        }
+
+        auto platform=engine::core::Controller::get<engine::platform::PlatformController>();
+        float elapsed=platform->frame_time().current-m_light_sequence_start_time;
+
+        if (elapsed>=2.0f && !m_point_light_red_event_done) {
+            m_point_light.ambient=glm::vec3(0.2f, 0.0f, 0.0f);
+            m_point_light.diffuse=glm::vec3(1.0f, 0.0f, 0.0f);
+            m_point_light.specular=glm::vec3(1.0f, 0.0f, 0.0f);
+
+            m_point_light_red_event_done=true;
+        }
+
+        if (elapsed>=5.0f && !m_point_light_moved_and_directional_blue_event_done) {
+            m_point_light.position=glm::vec3(-1.5f, 1.0f, 2.0f);
+
+            m_directional_light.ambient=glm::vec3(0.0f, 0.0f, 0.2f);
+            m_directional_light.diffuse=glm::vec3(0.0f, 0.0f, 1.0f);
+            m_directional_light.specular=glm::vec3(0.0f, 0.0f, 1.0f);
+
+            m_point_light_moved_and_directional_blue_event_done=true;
+            m_timed_light_sequence_active=false;
+        }
+
     }
 
     void MainController::begin_draw() {
