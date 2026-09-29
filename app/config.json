@@ -3,7 +3,7 @@
     "models": {
       "armchair": {
         "path": "armchair/Gray armchair-obj.obj",
-        "flip_uvs": false
+        "flip_uvs": true
       }
     }
   },
