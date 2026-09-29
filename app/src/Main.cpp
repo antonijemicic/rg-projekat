@@ -1,8 +1,21 @@
 #include <engine/core/Engine.hpp>
+#include <app/MainController.hpp>
 
-/**
- * Start here...
- */
+namespace app {
+    class MainApp final : public engine::core::App {
+    protected:
+        void app_setup() override {
+            auto main_controller = register_controller<MainController>();
+
+            main_controller->after(
+                engine::core::Controller::get<engine::core::EngineControllersEnd>()
+            );
+        }
+    };
+}
+
 int main(int argc, char **argv) {
-    return 0;
+    app::MainApp application;
+
+    return application.run(argc, argv);
 }
